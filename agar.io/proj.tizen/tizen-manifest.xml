@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="Agar.io-1.0" version="1.0.0">
+    <ui-application appid="Agar.io-1.0" exec="hellocpp" multiple="false" nodisplay="false" taskmanage="true" type="capp">
+        <label>Agar.io</label>
+        <icon>Agar.io.png</icon>
+    </ui-application>
+</manifest>
