@@ -1,11 +1,16 @@
-#include "cocos2d.h"
+#include"cocos2d.h"
 #include "MenuScene.h"
+#include"AudioControlScene.h"
 #include "ui/CocosGUI.h"
 USING_NS_CC;
 using namespace ui;
-cocos2d::Scene * GameMenu::createScene()
+
+Scene * GameMenu::createScene()
 {
-	return nullptr;
+	auto scene = Scene::create();
+    auto layer = GameMenu::create();
+	scene->addChild(layer);
+	return scene;
 }
 bool GameMenu::init()
 {
@@ -14,50 +19,46 @@ bool GameMenu::init()
 	{
 		return false;
 	}
+	
 	//获得设备可见视图大小
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-
+	
+	//菜单背景
+    auto title = Sprite::create("menu_background.png");
+	title->setPosition(Vec2(visibleSize.width/2 , visibleSize.height/2 ));
+	this->addChild(title,0);
+	
 	//"开始游戏"按钮
-	auto start_button = Button::create("button.png");
-	start_button->setScale(2);
-	start_button->setTitleText("开始游戏");
-	start_button->setTitleFontName("微软雅黑");
-	start_button->setTitleFontSize(16);
-	start_button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height*0.7));
-	start_button->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
+	auto start_button = Button::create("Begin.png");
+	start_button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height*0.6));
+	/*start_button->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED) 
 		{
 			//切换到preload场景
-			auto transition = TransitionSlideInL::create(2.0, PreLoad::createScene());
+			auto transition = TransitionShrinkGrow::create(1.0, preload::createScene());
 			Director::getInstance()->replaceScene(transition);
 		}
-	});
+	});*/ 
 	this->addChild(start_button);
+	
 	//"游戏设置"按钮
-	auto set_button = Button::create("button.png");
-	set_button->setScale(2);
-	set_button->setTitleText("游戏设置");
-	set_button->setTitleFontName("微软雅黑");
-	set_button->setTitleFontSize(16);
-	set_button->setPosition(Vec2(visibleSize. width / 2, visibleSize.height*0.55));
+	auto set_button = Button::create("Setting.png");
+	set_button->setPosition(Vec2(visibleSize. width / 2, visibleSize.height*0.45));
 	set_button->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 		{
 			if (type == Widget::TouchEventType::ENDED)
 			{
 				//切换到AudioControl场景
-				auto transition = TransitionSlideInL::create(2.0, AudioControlScene::createScene());
+				auto transition = TransitionShrinkGrow::create(0.2, AudioControl::createScene());
 				Director::getInstance()->replaceScene(transition);
 			}
 		});
 	this->addChild(set_button);
+	
 	//"退出游戏"按钮
-	auto close_button = Button::create("button.png");
-	close_button->setScale(2);
-	close_button->setTitleText("游戏设置");
-	close_button->setTitleFontName("微软雅黑");
-	close_button->setTitleFontSize(16);
-	close_button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height*0.4));
+	auto close_button = Button::create("Exit.png");
+	close_button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height*0.3));
 	close_button->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
@@ -74,6 +75,4 @@ bool GameMenu::init()
 	return true;
 }
 
-GameMenu::CREATE_FUNC(GameMenu)
-{
-}
+

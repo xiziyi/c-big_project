@@ -2,13 +2,20 @@
 #include "ui/CocosGUI.h"
 #include "cocos2d.h"
 #include "SimpleAudioEngine.h"
+#include "MenuScene.h"
 USING_NS_CC;
 using namespace ui;
 using namespace CocosDenshion;
-cocos2d::Scene * AudioControl::createScene()
+
+Scene * AudioControl::createScene()
 {
-	return nullptr;
+	auto scene = Scene::create();
+	auto layer = AudioControl::create();
+	scene->addChild(layer);
+	return scene;
 }
+
+
 bool AudioControl::init()
 {
 	//调用父类init的方法
@@ -16,12 +23,18 @@ bool AudioControl::init()
 	{
 		return false;
 	}
+
 	//获得设备可见视图大小
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
+	//菜单背景
+	auto title = Sprite::create("menu_background.png");
+	title->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	this->addChild(title, 0);
+	
 	//创建"背景音乐"文本并添加为当前层的子节点
-	auto music_text = Text::create("背景音乐", "Arial", 32);
-	music_text->setPosition(Vec2(visibleSize.width*0.25, visibleSize.height*0.7));
+	auto music_text = Text::create(" music", "Arial",40);
+	music_text->setPosition(Vec2(visibleSize.width*0.32, visibleSize.height*0.55));
 	this->addChild(music_text);
 	//创建一个滑动条
 	auto music_slider = Slider::create();
@@ -40,7 +53,7 @@ bool AudioControl::init()
 	}
 	//设置背景音乐滑动条的初始值
 	music_slider->setPercent(musicPercent);
-	music_slider->setPosition(Vec2(visibleSize.width*0.6, visibleSize.height*0.7));
+	music_slider->setPosition(Vec2(visibleSize.width*0.6, visibleSize.height*0.54));
 	//添加事件监听器，调整背景音乐音量 
 	music_slider->addEventListener([=](Ref* pSender, Slider::EventType type) 
 	{ 
@@ -58,8 +71,8 @@ bool AudioControl::init()
 	this->addChild(music_slider); 
 	
 	// 创 建 “音效音量”文本并添加为当前层的子节点
-	auto sound_text = Text::create("音效音量", "Arial", 32); 
-	sound_text->setPosition(Vec2(visibleSize.width*0.25,visibleSize.height*0.5));
+	auto sound_text = Text::create("yinxiao", "Arial",40); 
+	sound_text->setPosition(Vec2(visibleSize.width*0.32,visibleSize.height*0.35));
 	this->addChild(sound_text);
 	// 创建一个滑动条 
 	auto effects_slider = Slider::create(); 
@@ -78,7 +91,7 @@ bool AudioControl::init()
 	} 
 	// 设置音效滑动条的初始值
 	effects_slider->setPercent(effectPercent);
-	effects_slider->setPosition(Vec2(visibleSize.width*0.6, visibleSize.height*0.5)); 
+	effects_slider->setPosition(Vec2(visibleSize.width*0.6, visibleSize.height*0.34)); 
 	// 添加f 件监听器，调整音效音量
 	effects_slider->addEventListener([=](Ref* pSender, Slider::EventType type)
 	{ 
@@ -94,14 +107,14 @@ bool AudioControl::init()
 	});
     this->addChild(effects_slider);
 	//创建“返回钮点击时调用returnToMenu函数 
-	auto return_button = Button::create("bl.png"); 
-	return_button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	auto return_button = Button::create("return.png"); 
+	return_button->setPosition(Vec2(visibleSize.width *0.9, visibleSize.height*0.2));
 	return_button->addTouchEventListener([](Ref* pSender, Widget::TouchEventType type) 
 	{
 	   if (type == Widget::TouchEventType::ENDED) 
 	   {
 		  // 切换到MenuScene场景 
-		  auto transition = TransitionSlideInL::create(2.0, GameMenu::createScene()); 
+		  auto transition = TransitionShrinkGrow::create(0.2, GameMenu::createScene());
 		  Director::getInstance()->replaceScene(transition);
 	    } 
 	});
@@ -109,8 +122,6 @@ bool AudioControl::init()
 	return true; 
 }
 
-AudioControl::CREATE_FUNC(GameSet)
-{
-}
+
 
 	
