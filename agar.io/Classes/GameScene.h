@@ -1,41 +1,57 @@
 #pragma once
 #include "cocos2d.h"
-USING_NS_CC;
-
-
-class Game : public cocos2d::Layer
+#include"customBall.h"
+#include<vector>
+class GameScene :public cocos2d::Layer
 {
 private:
-	int _screenWidth, _screenHeight;
-	int _count;
-	TMXTiledMap* _map;
-	Sprite* player;
+	int ballTag = 0;
 public:
+	GameScene();
+	~GameScene();
+
+    //物理世界
+	cocos2d::PhysicsWorld* m_world;
+	//地图
+	cocos2d::TMXTiledMap* _map;
+	//当前食物数量
+	int foodCount = 0;
+	//最大食物数量
+	const int foodMax = 60;
+	//不可见的神秘力量
+	cocos2d::Sprite* master;
+
+	//精灵种类的标识符
+	const int player = 1;
+	const int food = 2;
+	//const int player2 = 2;
+	/* And so on......*/
+	int aaa = 0;
+
+	//创建物理世界
+	void setPhyWorld(cocos2d::PhysicsWorld* world) { m_world = world; };
+	//创建场景
 	static cocos2d::Scene* createScene();
-
-	//获得动画函数
-	//Animate* getAnimateByName(std::string animName, float delay, int animNum);
-	//将屏幕OpenGL坐标转化为TileMap坐标
-	Vec2 tileCoordForPosition(Vec2 position);
-	//计算玩家移动时间函数
-	float getPlayerMoveTime(Vec2 startPos, Vec2 endPos);
-	//玩家移动函数
-	void playerMover(Vec2 position);
-	//把玩家作为视觉中心来显示，让地图随玩家移动
-	void setViewPointCenter(float duration, Vec2 position);
-	//随机创造食物
-	void createfood();
-	//计时器中转函数
-	void foodmagic(float dt);
-
+	//初始化
 	virtual bool init();
+	//创造球（尺寸，放置位置，速度设定，球种类）
+	void creatBall(float scale, cocos2d::Vect pos, cocos2d::Vect vel,int kind);
+	//递增精灵的tag
+	void ballTagPlusOne();
+	//得到精灵的tag
+	int getBallTag();
+	//不断产生食物
+	void createFood(float dt);
+	//
+	void onEnter();
+	//重写update函数
+	//void update(float dt) override;
+	//接触事件函数
+	bool _onContactBegin(const cocos2d::PhysicsContact & contact);
+	//设置地图中心
+	//void setViewPointCenter(cocos2d::Vec2 position);
+	//void mapMove(cocos2d::Vect pos);
+	CREATE_FUNC(GameScene);
 
-	void update(float delta);
-
-
-	//a selector callback
-	void menuCloseCallback(cocos2d::Ref* pSender);
-
-	// implement the "static create()" method manually
-	CREATE_FUNC(Game);
 };
+

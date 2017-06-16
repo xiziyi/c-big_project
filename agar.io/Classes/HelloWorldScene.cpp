@@ -93,21 +93,6 @@ bool HelloWorld::init()
 
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
-	// create a static PhysicsBody
-	auto physicsBody = PhysicsBody::createCircle(10.f, PhysicsMaterial(1.0f, 0.0f, 0.3f));
-	physicsBody->setDynamic(false);
-
-	// create a sprite
-	auto sprite = Sprite::create("mengB.png");
-	sprite->setPosition(Vec2(400, 400));
-
-	// sprite will use physicsBody
-	sprite->addComponent(physicsBody);
-
-	//add contact event listener
-	auto contactListener = EventListenerPhysicsContact::create();
-	contactListener->onContactBegin= CC_CALLBACK_1(EventListenerPhysicsContact::onContactBegin, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
     return true;
 }
