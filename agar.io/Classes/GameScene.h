@@ -27,6 +27,7 @@ public:
 	//const int player2 = 2;
 	/* And so on......*/
 	int aaa = 0;
+	bool _checkDT;
 
 	//创建物理世界
 	void setPhyWorld(cocos2d::PhysicsWorld* world) { m_world = world; };
@@ -42,6 +43,8 @@ public:
 	int getBallTag();
 	//不断产生食物
 	void createFood(float dt);
+	//确认分裂过了一阵子
+	void checkDT(float dt);
 	//
 	void onEnter();
 	//重写update函数

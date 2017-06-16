@@ -68,12 +68,16 @@ bool GameScene::init()
 		{
 			Vector<Node*> children = this->getChildren();
 			for (auto n : children)
-				if ((n->getTag() % 10) == player)
+			{
+				if (((n->getTag() % 10) == player)&&(n->getScale()>0.2f))
 				{
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity() * 2, player);
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
 					n->removeFromParentAndCleanup(true);
 				}
+				_checkDT = false;
+				scheduleOnce(schedule_selector(GameScene::checkDT), 10.f);
+			}
 		}
 	};
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
@@ -224,7 +228,13 @@ void GameScene::createFood(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	creatBall(0.1f, Vect(visibleSize.width / 2, visibleSize.height / 2), Vect(0.f, 0.f), food);
-	log("ok");
+	log("foodOk");
+}
+
+void GameScene::checkDT(float dt)
+{
+	_checkDT = true;
+	log("divideOk");
 }
 
 void GameScene::onEnter()
@@ -252,33 +262,37 @@ void GameScene::onEnter()
 bool GameScene::_onContactBegin(const PhysicsContact& contact)
 {
 	auto spriteA =contact.getShapeA()->getBody()->getNode();
-	customBall* spriteB = (customBall*)contact.getShapeB()->getBody()->getNode();
-	if (aaa%2==1)
+	auto spriteB =contact.getShapeB()->getBody()->getNode();
+	if ((spriteA != nullptr) && (spriteB != nullptr))
 	{
-		int tagA = spriteA->getTag();
-		int tagB = spriteB->getTag();
-		if ((tagA % 10 == 1) && (tagB % 10 == 1))
+		if (aaa % 2 == 1)
 		{
-			float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
-			spriteA->setScale(newScale);
-			spriteB->removeFromParentAndCleanup(true);
+			int tagA = spriteA->getTag();
+			int tagB = spriteB->getTag();
+			if ((tagA % 10 == 1) && (tagB % 10 == 1) && _checkDT)
+			{
+				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
+				spriteA->setScale(newScale);
+				spriteB->removeFromParentAndCleanup(true);
+				unschedule(schedule_selector(GameScene::checkDT));
+			}
+			else if ((tagA % 10 == 1) && (tagB % 10 == 2))
+			{
+				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
+				spriteA->setScale(newScale);
+				spriteB->removeFromParentAndCleanup(true);
+				--foodCount;
+			}
+			else if ((tagA % 10 == 2) && (tagB % 10 == 1))
+			{
+				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
+				spriteB->setScale(newScale);
+				spriteA->removeFromParentAndCleanup(true);
+				--foodCount;
+			}
 		}
-		else if ((tagA % 10 == 1) && (tagB % 10 == 2))
-		{
-			float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
-			spriteA->setScale(newScale);
-			spriteB->removeFromParentAndCleanup(true);
-			--foodCount;
-		}
-		else if ((tagA % 10 == 2) && (tagB % 10 == 1))
-		{
-			float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
-			spriteB->setScale(newScale);
-			spriteA->removeFromParentAndCleanup(true);
-			--foodCount;
-		}
+		++aaa;
 	}
-	++aaa;
 	//log("%d and %d", tagA, tagB);
 	return true;
 }
