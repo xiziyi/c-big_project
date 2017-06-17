@@ -1,5 +1,6 @@
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include<time.h>
 
 USING_NS_CC;
 
@@ -55,7 +56,7 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
     
-    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
+    auto label = Label::createWithTTF("Agar.io", "fonts/Marker Felt.ttf", 24);
     
     // position the label on the center of the screen
     label->setPosition(Vec2(origin.x + visibleSize.width/2,
@@ -65,14 +66,34 @@ bool HelloWorld::init()
     this->addChild(label, 1);
 
     // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    auto sprite = Sprite::create("01.png");
+	sprite->setScale(0.3);
 
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
-    
+  //¼üÅÌ¼àÌý
+	auto listener = EventListenerKeyboard::create();
+	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+		log("Key with keycode %d pressed", keyCode);
+		if (keyCode ==EventKeyboard::KeyCode::KEY_SPACE)
+		{
+			auto sprite = Sprite::create("mengB.png");
+			srand(time(0));
+			sprite->setPosition(Vec2(visibleSize.width /(1 + rand() % 10) + origin.x, visibleSize.height / (1 + rand() % 10) + origin.y));
+			this->addChild(sprite, 0);
+		}
+	};
+	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+		log("Key with keycode %d released", keyCode);
+
+	};
+
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+
     return true;
 }
 
