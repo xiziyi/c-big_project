@@ -3,6 +3,7 @@
 #include "AudioControlScene.h"
 #include "ExitScene.h"
 #include "ui/CocosGUI.h"
+#include"GameScene.h"
 USING_NS_CC;
 using namespace ui;
 
@@ -32,15 +33,15 @@ bool GameMenu::init()
 	//"开始游戏"按钮
 	auto start_button = Button::create("Begin.png");
 	start_button->setPosition(Vec2(visibleSize.width / 2, visibleSize.height*0.6));
-	/*start_button->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
+	start_button->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED) 
 		{
 			//切换到preload场景
-			auto transition = TransitionShrinkGrow::create(1.0, preload::createScene());
+			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);
 		}
-	});*/ 
+	});
 	this->addChild(start_button);
 	
 	//"游戏设置"按钮
