@@ -24,10 +24,13 @@ public:
 	//精灵种类的标识符
 	const int player = 1;
 	const int food = 2;
+	const int mass = 3;
 	//const int player2 = 2;
 	/* And so on......*/
 	int aaa = 0;
-	bool _checkDT;
+	bool _checkDT = true;
+	//确认W键是否按下
+	bool _checkWP = false;
 
 	//创建物理世界
 	void setPhyWorld(cocos2d::PhysicsWorld* world) { m_world = world; };
@@ -41,7 +44,7 @@ public:
 	void ballTagPlusOne();
 	//得到精灵的tag
 	int getBallTag();
-	//不断产生食物
+	//不断产生食物、吐泡
 	void createFood(float dt);
 	//确认分裂过了一阵子
 	void checkDT(float dt);
