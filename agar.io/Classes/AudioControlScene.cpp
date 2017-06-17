@@ -28,14 +28,11 @@ bool AudioControl::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	//菜单背景
-	auto title = Sprite::create("menu_background.png");
+	auto title = Sprite::create("menu_background 2.png");
 	title->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(title, 0);
 	
-	//创建"背景音乐"文本并添加为当前层的子节点
-	auto music_text = Text::create(" music", "Arial",40);
-	music_text->setPosition(Vec2(visibleSize.width*0.32, visibleSize.height*0.55));
-	this->addChild(music_text);
+
 	//创建一个滑动条
 	auto music_slider = Slider::create();
 	//设置滑动条的纹理
@@ -70,10 +67,8 @@ bool AudioControl::init()
 	}); 
 	this->addChild(music_slider); 
 	
-	// 创 建 “音效音量”文本并添加为当前层的子节点
-	auto sound_text = Text::create("yinxiao", "Arial",40); 
-	sound_text->setPosition(Vec2(visibleSize.width*0.32,visibleSize.height*0.35));
-	this->addChild(sound_text);
+
+
 	// 创建一个滑动条 
 	auto effects_slider = Slider::create(); 
 	// 设置滑动条的纹理 
