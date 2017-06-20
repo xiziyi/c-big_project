@@ -1,8 +1,10 @@
 #include "GameScene.h"
+#include"SimpleAudioEngine.h"
 #include<math.h>
 USING_NS_CC;
 using namespace std;
-
+using namespace cocos2d;
+using namespace CocosDenshion;
 
 GameScene::GameScene()
 {
@@ -34,6 +36,9 @@ bool GameScene::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Point origin = Director::getInstance()->getVisibleOrigin();
+
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic("music.wav");
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("music.wav", true);
 
 	//添加地图
 	_map = TMXTiledMap::create("_map.tmx");
@@ -74,6 +79,8 @@ bool GameScene::init()
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity() * 2, player);
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
 					n->removeFromParentAndCleanup(true);
+					SimpleAudioEngine::sharedEngine()->preloadEffect("effect.wav");
+					SimpleAudioEngine::sharedEngine()->playEffect("effect.wav", false);
 					_checkDT = false;//触发分裂后短时不能融合
 				}
 			}
@@ -139,7 +146,34 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 
 	if (kind == player)
 	{
-		auto ball = customBall::create("mengB.png", kind);
+		auto ball = customBall::create("meng.png", kind);
+		int i = UserDefault::getInstance()->getIntegerForKey("integer");
+		if (i == 1)
+		{
+             ball = customBall::create("haipa.png", kind);
+		}
+		else if (i == 2)
+		{
+			 ball = customBall::create("meng.png", kind);
+		}
+		else if (i == 3)
+		{
+			 ball = customBall::create("kaixin.png", kind);
+		}
+		else if (i == 4)
+		{
+			 ball = customBall::create("shengqi.png", kind);
+		}
+		else if (i ==5)
+		{
+			 ball = customBall::create("mogui.png", kind);
+		}
+		else if (i == 6)
+		{
+			 ball = customBall::create("zhongdu.png", kind);
+		}
+
+		
 		//精灵尺寸
 		ball->setScale(scale);
 		//精灵位置
@@ -299,7 +333,6 @@ void GameScene::onEnter()
 	//添加到事件分发器中
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 }
-
 
 /*void GameScene::update(float dt)
 {

@@ -1,5 +1,6 @@
 #include "cocos2d.h"
 #include "MenuScene.h"
+#include "ChooseScene.h"
 #include "AudioControlScene.h"
 #include "ExitScene.h"
 #include "ui/CocosGUI.h"
@@ -37,8 +38,8 @@ bool GameMenu::init()
 	{
 		if (type == Widget::TouchEventType::ENDED) 
 		{
-			//切换到preload场景
-			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
+			//切换到pifu场景
+			auto transition = TransitionShrinkGrow::create(1.0, Choose::createScene());
 			Director::getInstance()->replaceScene(transition);
 		}
 	});
