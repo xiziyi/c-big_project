@@ -34,6 +34,8 @@ bool GameScene::init()
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Point origin = Director::getInstance()->getVisibleOrigin();
+	_screenWidth = visibleSize.width;
+	_screenHeight = visibleSize.height;
 
 	//添加地图
 	_map = TMXTiledMap::create("_map.tmx");
@@ -42,20 +44,35 @@ bool GameScene::init()
 	this->addChild(_map);
 	_map->setTag(0);
 
+
+
+
+
+
+
 	//第一个球
-	GameScene::creatBall(0.5f, Vect(visibleSize.width / 2, visibleSize.height / 2), Vect(0.f, 0.f), player);
+	GameScene::creatBall(0.5f, Vect(_map->getMapSize().width*_map->getTileSize().width/2, _map->getMapSize().height*_map->getTileSize().height / 2), Vect(0.f, 0.f), player);
 	//食物
 	creatBall(0.1f, Vect(visibleSize.width / 2, visibleSize.height / 2), Vect(0.f, 0.f),food);
+
+	//创建标签
+	_Weight = 100;
+	char a[8];
+	//数字转字符串
+	sprintf(a, "%d", _Weight);
+	weightscore = Label::createWithSystemFont(a, "Arial", 32);
+	weightscore->setPosition(50, _screenHeight*0.98);
+	this->addChild(weightscore);
 
 
 	//创建一个盒子，用来碰撞
 	Sprite* edgeSpace = Sprite::create();
-	PhysicsBody* boundBody = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT);
+	PhysicsBody* boundBody = PhysicsBody::createEdgeBox(Size(_map->getMapSize().width*_map->getTileSize().width, _map->getMapSize().height*_map->getTileSize().height), PHYSICSBODY_MATERIAL_DEFAULT);
 	boundBody->getShape(0)->setFriction(0.0f);
 	boundBody->getShape(0)->setRestitution(0.1f);
 
 	edgeSpace->setPhysicsBody(boundBody);
-	edgeSpace->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	edgeSpace->setPosition(Point(_map->getMapSize().width*_map->getTileSize().width / 2, _map->getMapSize().height*_map->getTileSize().height / 2));
 	this->addChild(edgeSpace);
 	edgeSpace->setTag(10);
 
@@ -100,7 +117,7 @@ bool GameScene::init()
 		{
 			if (n->getTag() % 10 == player)
 			{
-				n->getPhysicsBody()->applyImpulse(((touch->getLocation()) - (n->getPosition())) * 1000);
+				n->getPhysicsBody()->applyImpulse(((this->convertToNodeSpace(touch->getLocation())) - (n->getPosition())) * 1000);
 			}
 		}
 		return true;
@@ -111,13 +128,14 @@ bool GameScene::init()
 		{
 			if (n->getTag() % 10 == player)
 			{
-				n->getPhysicsBody()->applyImpulse(((touch->getLocation()) - (n->getPosition())) * 1000);
+				n->getPhysicsBody()->applyImpulse(((this->convertToNodeSpace(touch->getLocation())) - (n->getPosition())) * 1000);
 			}
 		}
 		return true;
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchListener, this);
 	
+
 	
 	//添加接触（碰撞）监听器
 	auto contactListener = EventListenerPhysicsContact::create();
@@ -131,8 +149,29 @@ bool GameScene::init()
 	//计时器 
 	schedule(schedule_selector(GameScene::createFood), 0.1f);
 
+	this->schedule(schedule_selector(GameScene::update), 1 / 60);
+
 	return true;
 }
+
+
+void GameScene::Weightchange(Node* who, Vec2 position)
+{
+	who->removeFromParentAndCleanup(true);
+	char a[20];
+	//数字转字符串
+	sprintf(a, "%d", _Weight);
+	weightscore = Label::createWithSystemFont(a, "Arial", 32);
+
+	int x = MAX(position.x, _screenWidth / 2);
+	int y = MAX(position.y, _screenHeight / 2);
+
+	x = MIN(x, (_map->getMapSize().width*_map->getTileSize().width - _screenWidth / 2));
+	y = MIN(y, (_map->getMapSize().height*_map->getTileSize().height - _screenHeight / 2));
+	weightscore->setPosition(x - 300, y + 150);
+	this->addChild(weightscore);
+}
+
 
 void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 {
@@ -156,7 +195,7 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 		//设置物体的摩擦力（只有碰撞时才有用）
 		ballBody->getShape(0)->setFriction(0.0f);
 		//设置物体密度
-		ballBody->getShape(0)->setDensity(1.0f);
+		ballBody->getShape(0)->setDensity(1.f);
 		//设置质量
 		//ballBodyOne->getShape(0)->setMass(5000);
 		//设置物体是否受重力系数影响
@@ -191,8 +230,8 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 		{
 			auto ball = customBall::create("food.png", kind);
 			ball->setScale(scale);
-			int y = rand() % (int)(visibleSize.height);
-			int x = rand() % (int)(visibleSize.width);
+			int y = rand() % (int)( _map->getMapSize().height*_map->getTileSize().height);
+			int x = rand() % (int)(_map->getMapSize().width*_map->getTileSize().width );
 			ball->setPosition(x, y);
 			ball->rad = ball->getContentSize().width / 2;
 			PhysicsBody* ballBody = PhysicsBody::createCircle(ball->rad, PHYSICSBODY_MATERIAL_DEFAULT);
@@ -263,7 +302,7 @@ int GameScene::getBallTag()
 void GameScene::createFood(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
-	creatBall(0.1f, Vect(visibleSize.width / 2, visibleSize.height / 2), Vect(0.f, 0.f), food);
+	creatBall(0.1f, Vect(_map->getMapSize().width*_map->getTileSize().width / 2, _map->getMapSize().height*_map->getTileSize().height / 2), Vect(0.f, 0.f), food);
 	log("foodOk");
 	if (_checkWP)//产生mass
 	{
@@ -276,6 +315,7 @@ void GameScene::createFood(float dt)
 				creatBall(0.15f, n->getPosition(), n->getPhysicsBody()->getVelocity()* 15, mass);
 				float newScale = pow(((n->getScale()*n->getScale()*n->getScale())-0.003375f), 0.333333f);
 				creatBall(newScale, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
+				_Weight -= 15;
 				n->removeFromParentAndCleanup(true);
 			}
 		}
@@ -300,6 +340,47 @@ void GameScene::onEnter()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 }
 
+
+void GameScene::setViewPointCenter(Vec2 position)
+{
+	int x = MAX(position.x, _screenWidth / 2);
+	int y = MAX(position.y, _screenHeight / 2);
+
+	x = MIN(x, (_map->getMapSize().width*_map->getTileSize().width - _screenWidth / 2));
+	y = MIN(y, (_map->getMapSize().height*_map->getTileSize().height - _screenHeight / 2));
+	Point actualPosition = Point(x, y);
+
+	Point centerOfView = Point(_screenWidth / 2, _screenHeight / 2);
+	Point viewPoint = centerOfView - actualPosition;
+	//Point try1 = Point(x + 10, y + 10);
+	log("action");
+	this->setPosition(viewPoint);
+	//this->runAction(MoveTo::create(1.0f, viewPoint));
+	//this->runAction(MoveTo::create(0.01f, Point(3000,3000));
+}
+
+
+void GameScene::update(float dt)
+{
+	Vector<Node*> children = this->getChildren();
+	int index = 0;
+	for (auto n : children)
+	{
+		if (n->getTag() %10 == player)
+		{
+			if (index == 0)
+			{
+				log("position ok");
+				setViewPointCenter(n->getPosition());
+				Weightchange(weightscore, n->getPosition());
+				++index;
+			}
+
+		}
+	}
+
+
+}
 
 /*void GameScene::update(float dt)
 {
@@ -333,6 +414,7 @@ bool GameScene::_onContactBegin(const PhysicsContact& contact)
 				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333f);
 				spriteA->setScale(newScale);
 				spriteB->removeFromParentAndCleanup(true);
+				_Weight += 10;
 				--foodCount;
 			}
 			else if ((tagA % 10 == 2) && (tagB % 10 == 1))
@@ -340,6 +422,7 @@ bool GameScene::_onContactBegin(const PhysicsContact& contact)
 				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333f);
 				spriteB->setScale(newScale);
 				spriteA->removeFromParentAndCleanup(true);
+				_Weight += 10;
 				--foodCount;
 			}
 			else if ((tagA % 10 == 1) && (tagB % 10 == 3) && (!_checkWP))
@@ -348,6 +431,7 @@ bool GameScene::_onContactBegin(const PhysicsContact& contact)
 				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
 				spriteA->setScale(newScale);
 				spriteB->removeFromParentAndCleanup(true);
+				_Weight += 15;
 			}
 			else if ((tagA % 10 == 3) && (tagB % 10 == 1) && (!_checkWP))
 			{
@@ -355,6 +439,7 @@ bool GameScene::_onContactBegin(const PhysicsContact& contact)
 				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
 				spriteB->setScale(newScale);
 				spriteA->removeFromParentAndCleanup(true);
+				_Weight += 15;
 			}
 		}
 		++aaa;

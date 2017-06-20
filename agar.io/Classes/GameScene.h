@@ -2,10 +2,15 @@
 #include "cocos2d.h"
 #include"customBall.h"
 #include<vector>
+USING_NS_CC;
 class GameScene :public cocos2d::Layer
 {
 private:
+	Label* weightscore;
 	int ballTag = 0;
+	int _screenWidth, _screenHeight;
+	int _Weight;
+
 public:
 	GameScene();
 	~GameScene();
@@ -17,7 +22,7 @@ public:
 	//当前食物数量
 	int foodCount = 0;
 	//最大食物数量
-	const int foodMax = 60;
+	const int foodMax = 1200;
 	//不可见的神秘力量
 	cocos2d::Sprite* master;
 
@@ -38,6 +43,8 @@ public:
 	static cocos2d::Scene* createScene();
 	//初始化
 	virtual bool init();
+	//体重更新
+	void Weightchange(Node * who, Vec2 position);
 	//创造球（尺寸，放置位置，速度设定，球种类）
 	void creatBall(float scale, cocos2d::Vect pos, cocos2d::Vect vel,int kind);
 	//递增精灵的tag
@@ -46,11 +53,15 @@ public:
 	int getBallTag();
 	//不断产生食物、吐泡
 	void createFood(float dt);
+	//把玩家作为视觉中心来显示，让地图随玩家移动
+	void setViewPointCenter(Vec2 position);
 	//确认分裂过了一阵子
 	void checkDT(float dt);
 	//
 	void onEnter();
+
 	//重写update函数
+	void update(float dt);
 	//void update(float dt) override;
 	//接触事件函数
 	bool _onContactBegin(const cocos2d::PhysicsContact & contact);
