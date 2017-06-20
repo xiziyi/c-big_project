@@ -29,7 +29,7 @@ bool EnterScene::init()
 	title->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(title, 0);
 
-	auto transition = TransitionFade::create(8.0, GameMenu::createScene());
+	auto transition = TransitionFade::create(12.0, GameMenu::createScene());
 	Director::getInstance()->replaceScene(transition);
 	this->addChild(transition,0);
 

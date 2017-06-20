@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include"SimpleAudioEngine.h"
 #include<math.h>
 #include "ui/CocosGUI.h"
 #include "MenuScene.h"
@@ -6,7 +7,8 @@
 USING_NS_CC;
 using namespace ui;
 using namespace std;
-
+using namespace cocos2d;
+using namespace CocosDenshion;
 
 GameScene::GameScene()
 {
@@ -18,12 +20,12 @@ GameScene::~GameScene()
 }
 cocos2d::Scene* GameScene::createScene()
 {
-	//´´½¨ÓÐÎïÀí¿Õ¼äµÄ³¡¾°
+	//åˆ›å»ºæœ‰ç‰©ç†ç©ºé—´çš„åœºæ™¯
 	cocos2d::Scene* scene = cocos2d::Scene::createWithPhysics();
-	//ÉèÖÃDebugÄ£Ê½£¬Äã»á¿´µ½ÎïÌåµÄ±íÃæ±»ÏßÌõ°üÎ§£¬Ö÷ÒªÎªÁËÔÚµ÷ÊÔÖÐ¸üÈÝÒ×µØ¹Û²ì
+	//è®¾ç½®Debugæ¨¡å¼ï¼Œä½ ä¼šçœ‹åˆ°ç‰©ä½“çš„è¡¨é¢è¢«çº¿æ¡åŒ…å›´ï¼Œä¸»è¦ä¸ºäº†åœ¨è°ƒè¯•ä¸­æ›´å®¹æ˜“åœ°è§‚å¯Ÿ
 	//scene->getPhysicsWorld()->setDebugDrawMask(cocos2d::PhysicsWorld::DEBUGDRAW_ALL);
 	GameScene* layer = GameScene::create();
-	//°Ñ¿Õ¼ä±£³ÖÎÒÃÇ´´½¨µÄ²ãÖÐ£¬¾ÍÊÇÉÏÃæËùËµm_worldµÄ×÷ÓÃ£¬·½±ãºóÃæÉèÖÃ¿Õ¼äµÄ²ÎÊý
+	//æŠŠç©ºé—´ä¿æŒæˆ‘ä»¬åˆ›å»ºçš„å±‚ä¸­ï¼Œå°±æ˜¯ä¸Šé¢æ‰€è¯´m_worldçš„ä½œç”¨ï¼Œæ–¹ä¾¿åŽé¢è®¾ç½®ç©ºé—´çš„å‚æ•°
 	layer->setPhyWorld(scene->getPhysicsWorld());
 	scene->addChild(layer);
 	return scene;
@@ -41,7 +43,10 @@ bool GameScene::init()
 	_screenWidth = visibleSize.width;
 	_screenHeight = visibleSize.height;
 
-	//Ìí¼ÓµØÍ¼
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic("music.wav");
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("music.wav", true);
+
+	//æ·»åŠ åœ°å›¾
 	_map = TMXTiledMap::create("_map.tmx");
 	_map->setAnchorPoint(Vec2::ZERO);
 	_map->setPosition(Vec2::ZERO);
@@ -54,15 +59,15 @@ bool GameScene::init()
 
 
 
-	//µÚÒ»¸öÇò
+	//ç¬¬ä¸€ä¸ªçƒ
 	GameScene::creatBall(0.5f, Vect(_map->getMapSize().width*_map->getTileSize().width/2, _map->getMapSize().height*_map->getTileSize().height / 2), Vect(0.f, 0.f), player);
-	//Ê³Îï
+	//é£Ÿç‰©
 	creatBall(0.1f, Vect(visibleSize.width / 2, visibleSize.height / 2), Vect(0.f, 0.f),food);
 
-	//´´½¨±êÇ©
+	//åˆ›å»ºæ ‡ç­¾
 	_Weight = 100;
 	char a[8];
-	//Êý×Ö×ª×Ö·û´®
+	//æ•°å­—è½¬å­—ç¬¦ä¸²
 	char score[20] = "score:";
 	sprintf(a, "%d", _Weight);
 	strcat(score, a);
@@ -71,21 +76,21 @@ bool GameScene::init()
 	this->addChild(weightscore);
 
 
-	//´´½¨·µ»Ø
+	//åˆ›å»ºè¿”å›ž
 	return1_button = Button::create("return.png");
 	return1_button->setPosition(Vec2(_map->getMapSize().width*_map->getTileSize().width / 2+350, _map->getMapSize().height*_map->getTileSize().height / 2+185));
 	return1_button->addTouchEventListener([](Ref* pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			// ÇÐ»»µ½MenuScene³¡¾° 
+			// åˆ‡æ¢åˆ°MenuSceneåœºæ™¯ 
 			auto transition = TransitionShrinkGrow::create(0.2, GameMenu::createScene());
 			Director::getInstance()->replaceScene(transition);
 		}
 	});
 	this->addChild(return1_button);
 
-	//´´½¨Ò»¸öºÐ×Ó£¬ÓÃÀ´Åö×²
+	//åˆ›å»ºä¸€ä¸ªç›’å­ï¼Œç”¨æ¥ç¢°æ’ž
 	Sprite* edgeSpace = Sprite::create();
 	PhysicsBody* boundBody = PhysicsBody::createEdgeBox(Size(_map->getMapSize().width*_map->getTileSize().width, _map->getMapSize().height*_map->getTileSize().height), PHYSICSBODY_MATERIAL_DEFAULT);
 	boundBody->getShape(0)->setFriction(0.0f);
@@ -97,7 +102,7 @@ bool GameScene::init()
 	edgeSpace->setTag(10);
 
 
-	//¼üÅÌ¼àÌý£¬¿ØÖÆ·ÖÁÑ
+	//é”®ç›˜ç›‘å¬ï¼ŒæŽ§åˆ¶åˆ†è£‚
 	auto listener = EventListenerKeyboard::create();
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
 		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
@@ -110,7 +115,9 @@ bool GameScene::init()
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity() * 2, player);
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
 					n->removeFromParentAndCleanup(true);
-					_checkDT = false;//´¥·¢·ÖÁÑºó¶ÌÊ±²»ÄÜÈÚºÏ
+					SimpleAudioEngine::sharedEngine()->preloadEffect("effect.wav");
+					SimpleAudioEngine::sharedEngine()->playEffect("effect.wav", false);
+					_checkDT = false;//è§¦å‘åˆ†è£‚åŽçŸ­æ—¶ä¸èƒ½èžåˆ
 				}
 			}
 			scheduleOnce(schedule_selector(GameScene::checkDT), 10.f);
@@ -127,7 +134,7 @@ bool GameScene::init()
 	};
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
-	//´¥Ãþ¼àÌý£¬¿ØÖÆÔË¶¯
+	//è§¦æ‘¸ç›‘å¬ï¼ŒæŽ§åˆ¶è¿åŠ¨
 	auto touchListener = EventListenerTouchOneByOne::create();
 	touchListener->onTouchBegan = [=](Touch* touch, Event* ev) {
 		Vector<Node*> balls = this->getChildren();
@@ -155,16 +162,16 @@ bool GameScene::init()
 	
 
 	
-	//Ìí¼Ó½Ó´¥£¨Åö×²£©¼àÌýÆ÷
+	//æ·»åŠ æŽ¥è§¦ï¼ˆç¢°æ’žï¼‰ç›‘å¬å™¨
 	auto contactListener = EventListenerPhysicsContact::create();
-	//ÉèÖÃ¼àÌýÆ÷µÄÅö×²¿ªÊ¼º¯Êý
+	//è®¾ç½®ç›‘å¬å™¨çš„ç¢°æ’žå¼€å§‹å‡½æ•°
 	contactListener->onContactBegin = CC_CALLBACK_1(GameScene::_onContactBegin, this);
-	//Ìí¼Óµ½ÊÂ¼þ·Ö·¢Æ÷ÖÐ
+	//æ·»åŠ åˆ°äº‹ä»¶åˆ†å‘å™¨ä¸­
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 
-	//Ìí¼Óµ÷¶ÈÆ÷
+	//æ·»åŠ è°ƒåº¦å™¨
 	scheduleUpdate();
-	//¼ÆÊ±Æ÷ 
+	//è®¡æ—¶å™¨ 
 	schedule(schedule_selector(GameScene::createFood), 0.1f);
 
 	this->schedule(schedule_selector(GameScene::update), 1 / 60);
@@ -178,7 +185,7 @@ void GameScene::Weightchange(Node* who, Vec2 position)
 	who->removeFromParentAndCleanup(true);
 	char a[8];
 	char score[20] = "score:";
-	//Êý×Ö×ª×Ö·û´®
+	//æ•°å­—è½¬å­—ç¬¦ä¸²
 	sprintf(a, "%d", _Weight);
 	strcat(score, a);
 	weightscore = Label::createWithSystemFont(score, "Arial", 32);
@@ -192,48 +199,75 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 
 	if (kind == player)
 	{
-		auto ball = customBall::create("mengB.png", kind);
-		//¾«Áé³ß´ç
+		auto ball = customBall::create("meng.png", kind);
+		int i = UserDefault::getInstance()->getIntegerForKey("integer");
+		if (i == 1)
+		{
+             ball = customBall::create("haipa.png", kind);
+		}
+		else if (i == 2)
+		{
+			 ball = customBall::create("meng.png", kind);
+		}
+		else if (i == 3)
+		{
+			 ball = customBall::create("kaixin.png", kind);
+		}
+		else if (i == 4)
+		{
+			 ball = customBall::create("shengqi.png", kind);
+		}
+		else if (i ==5)
+		{
+			 ball = customBall::create("mogui.png", kind);
+		}
+		else if (i == 6)
+		{
+			 ball = customBall::create("zhongdu.png", kind);
+		}
+
+		
+		//ç²¾çµå°ºå¯¸
 		ball->setScale(scale);
-		//¾«ÁéÎ»ÖÃ
+		//ç²¾çµä½ç½®
 		ball->setPosition(pos);
-		//Çò°ë¾¶
+		//çƒåŠå¾„
 		ball->rad = ball->getContentSize().width / 2;
-		//´´½¨ÎïÌå£¬²¢ÇÒÎïÌåµÄÐÎ×´ÎªÔ²ÐÎ£¬µÚÒ»²ÎÊýÎª°ë¾¶£¬µÚ¶þ¸ö²ÎÊýÎªÎïÌå²ÄÖÊ
-		//µÚÈý¸ö²ÎÊýÎª±ßµÄºñ¶È,¾ÍÊÇÔÚDebugÄ£Ê½ÏÂ¿´µ½µÄÎïÌåÍâÃæÏßÌõµÄºñ¶È£¬Ä¬ÈÏÎª0
+		//åˆ›å»ºç‰©ä½“ï¼Œå¹¶ä¸”ç‰©ä½“çš„å½¢çŠ¶ä¸ºåœ†å½¢ï¼Œç¬¬ä¸€å‚æ•°ä¸ºåŠå¾„ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¸ºç‰©ä½“æè´¨
+		//ç¬¬ä¸‰ä¸ªå‚æ•°ä¸ºè¾¹çš„åŽšåº¦,å°±æ˜¯åœ¨Debugæ¨¡å¼ä¸‹çœ‹åˆ°çš„ç‰©ä½“å¤–é¢çº¿æ¡çš„åŽšåº¦ï¼Œé»˜è®¤ä¸º0
 		PhysicsBody* ballBody = PhysicsBody::createCircle(ball->rad, PHYSICSBODY_MATERIAL_DEFAULT);
-		//ÊÇ·ñÉèÖÃÎïÌåÎª¾²Ì¬
+		//æ˜¯å¦è®¾ç½®ç‰©ä½“ä¸ºé™æ€
 		//ballBody->setDynamic(true);
-		//ÉèÖÃÎïÌåµÄ»Ö¸´Á¦£¨µ¯ÐÔ£©
+		//è®¾ç½®ç‰©ä½“çš„æ¢å¤åŠ›ï¼ˆå¼¹æ€§ï¼‰
 		ballBody->getShape(0)->setRestitution(0.1f);
-		//ÉèÖÃÎïÌåµÄÄ¦²ÁÁ¦£¨Ö»ÓÐÅö×²Ê±²ÅÓÐÓÃ£©
+		//è®¾ç½®ç‰©ä½“çš„æ‘©æ“¦åŠ›ï¼ˆåªæœ‰ç¢°æ’žæ—¶æ‰æœ‰ç”¨ï¼‰
 		ballBody->getShape(0)->setFriction(0.0f);
-		//ÉèÖÃÎïÌåÃÜ¶È
+		//è®¾ç½®ç‰©ä½“å¯†åº¦
 		ballBody->getShape(0)->setDensity(1.f);
-		//ÉèÖÃÖÊÁ¿
+		//è®¾ç½®è´¨é‡
 		//ballBodyOne->getShape(0)->setMass(5000);
-		//ÉèÖÃÎïÌåÊÇ·ñÊÜÖØÁ¦ÏµÊýÓ°Ïì
+		//è®¾ç½®ç‰©ä½“æ˜¯å¦å—é‡åŠ›ç³»æ•°å½±å“
 		ballBody->setGravityEnable(false);
 
-		//ÉèÖÃÎïÌåµÄ³åÁ¦
+		//è®¾ç½®ç‰©ä½“çš„å†²åŠ›
 		Vect force = Vect(0.0f, 0.0f);
 		ballBody->applyImpulse(force);
-		//ÉèÖÃËÙ¶È
+		//è®¾ç½®é€Ÿåº¦
 		ballBody->setVelocity(vel);
 		ballBody->setVelocityLimit(20000.f / ball->rad);
-		//°ÑÎïÌåÌí¼Óµ½¾«ÁéÖÐ
+		//æŠŠç‰©ä½“æ·»åŠ åˆ°ç²¾çµä¸­
 		ball->setPhysicsBody(ballBody);
-		//ÉèÖÃ±êÖ¾
+		//è®¾ç½®æ ‡å¿—
 		ball->setTag(getBallTag()*10+kind);
-		//ÉèÖÃ·ÖÀàÑÚÂë
+		//è®¾ç½®åˆ†ç±»æŽ©ç 
 		ballBody->setCategoryBitmask(0x0001);
-		//ÉèÖÃÅö×²ÑÚÂë
+		//è®¾ç½®ç¢°æ’žæŽ©ç 
 		ballBody->setCollisionBitmask(0x0001);
-		//ÉèÖÃ½Ó´¥²âÊÔÑÚÂë
+		//è®¾ç½®æŽ¥è§¦æµ‹è¯•æŽ©ç 
 		ballBody->setContactTestBitmask(0x0001);
 
 		this->addChild(ball);
-		//ÇòµÄtag¼ÓÒ»
+		//çƒçš„tagåŠ ä¸€
 		ballTagPlusOne();
 		
 	}
@@ -281,7 +315,7 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 		//ballBody->setDynamic(true);
 		ballBody->getShape(0)->setRestitution(0.1f);
 		ballBody->getShape(0)->setFriction(0.0f);
-		//ÉèÖÃÏßÐÔ×èÄáÊ¹ÆäÍ£Ö¹
+		//è®¾ç½®çº¿æ€§é˜»å°¼ä½¿å…¶åœæ­¢
 		ballBody->setLinearDamping(8.f);
 		ballBody->getShape(0)->setDensity(1.0f);
 		//ballBodyOne->getShape(0)->setMass(5000);
@@ -311,19 +345,17 @@ int GameScene::getBallTag()
 {
 	return ballTag;
 }
-
 void GameScene::createFood(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	creatBall(0.1f, Vect(_map->getMapSize().width*_map->getTileSize().width / 2, _map->getMapSize().height*_map->getTileSize().height / 2), Vect(0.f, 0.f), food);
-	if (_checkWP)//²úÉúmass
+	if (_checkWP)//äº§ç”Ÿmass
 	{
 		Vector<Node*> children = this->getChildren();
 		for (auto n : children)
 		{
 			if (((n->getTag() % 10) == player) && (n->getScale() > 0.3f))
-			{
-				creatBall(0.15f, n->getPosition(), n->getPhysicsBody()->getVelocity()* 15, mass);
+			{				creatBall(0.15f, n->getPosition(), n->getPhysicsBody()->getVelocity()* 15, mass);
 				float newScale = pow(((n->getScale()*n->getScale()*n->getScale())-0.003375f), 0.333333f);
 				creatBall(newScale, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
 				_Weight -= 15;
@@ -342,15 +374,17 @@ void GameScene::checkDT(float dt)
 void GameScene::onEnter()
 {
 	Layer::onEnter();
-	//Ìí¼Ó¼àÌýÆ÷
+	//æ·»åŠ ç›‘å¬å™¨
 	auto contactListener = EventListenerPhysicsContact::create();
-	//ÉèÖÃ¼àÌýÆ÷µÄÅö×²¿ªÊ¼º¯Êý
+	//è®¾ç½®ç›‘å¬å™¨çš„ç¢°æ’žå¼€å§‹å‡½æ•°
 	contactListener->onContactBegin = CC_CALLBACK_1(GameScene::_onContactBegin, this);
-	//Ìí¼Óµ½ÊÂ¼þ·Ö·¢Æ÷ÖÐ
+	//æ·»åŠ åˆ°äº‹ä»¶åˆ†å‘å™¨ä¸­
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 }
 
-//µØÍ¼ÖÐÐÄÑ°ÕÒº¯Êý
+
+
+//åœ°å›¾ä¸­å¿ƒå¯»æ‰¾å‡½æ•°
 Point GameScene::scenecenter(Vec2 position)
 {
 	int x = MAX(position.x, _screenWidth / 2);

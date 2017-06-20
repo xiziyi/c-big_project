@@ -97,7 +97,8 @@ bool AudioControl::init()
 			int percent = effects_slider->getPercent();
 			// 设置背景音效值 
 			SimpleAudioEngine::getInstance()->setEffectsVolume(float(percent) / 100); 
-			// 存储设置的背景音乐值 UserDefault::getlnstance()->setFloatForKey("effectPercent", percent);
+			// 存储设置的背景音乐值 
+			UserDefault::getInstance()->setFloatForKey("effectPercent", percent);
 	    } 
 	});
     this->addChild(effects_slider);

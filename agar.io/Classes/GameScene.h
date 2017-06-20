@@ -1,4 +1,3 @@
-#pragma once
 #include "cocos2d.h"
 #include"customBall.h"
 #include<vector>
@@ -80,4 +79,5 @@ public:
 	CREATE_FUNC(GameScene);
 
 };
+
 
