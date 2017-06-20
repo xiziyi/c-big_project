@@ -1,6 +1,10 @@
 #include "GameScene.h"
 #include<math.h>
+#include "ui/CocosGUI.h"
+#include "MenuScene.h"
+#include "string"
 USING_NS_CC;
+using namespace ui;
 using namespace std;
 
 
@@ -59,11 +63,27 @@ bool GameScene::init()
 	_Weight = 100;
 	char a[8];
 	//数字转字符串
+	char score[20] = "score:";
 	sprintf(a, "%d", _Weight);
-	weightscore = Label::createWithSystemFont(a, "Arial", 32);
-	weightscore->setPosition(50, _screenHeight*0.98);
+	strcat(score, a);
+	weightscore = Label::createWithSystemFont(score, "Arial", 32);
+	weightscore->setPosition(_map->getMapSize().width*_map->getTileSize().width / 2 - 300, _map->getMapSize().height*_map->getTileSize().height / 2 + 185);
 	this->addChild(weightscore);
 
+
+	//创建返回
+	return1_button = Button::create("return.png");
+	return1_button->setPosition(Vec2(_map->getMapSize().width*_map->getTileSize().width / 2+350, _map->getMapSize().height*_map->getTileSize().height / 2+185));
+	return1_button->addTouchEventListener([](Ref* pSender, Widget::TouchEventType type)
+	{
+		if (type == Widget::TouchEventType::ENDED)
+		{
+			// 切换到MenuScene场景 
+			auto transition = TransitionShrinkGrow::create(0.2, GameMenu::createScene());
+			Director::getInstance()->replaceScene(transition);
+		}
+	});
+	this->addChild(return1_button);
 
 	//创建一个盒子，用来碰撞
 	Sprite* edgeSpace = Sprite::create();
@@ -80,7 +100,6 @@ bool GameScene::init()
 	//键盘监听，控制分裂
 	auto listener = EventListenerKeyboard::create();
 	listener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-		log("Key with keycode %d pressed", keyCode);
 		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
 		{
 			Vector<Node*> children = this->getChildren();
@@ -102,7 +121,6 @@ bool GameScene::init()
 		}
 	};
 	listener->onKeyReleased = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-		log("Key with keycode %d released", keyCode);
 		if (keyCode == EventKeyboard::KeyCode::KEY_W)
 			_checkWP = false;
 
@@ -158,17 +176,13 @@ bool GameScene::init()
 void GameScene::Weightchange(Node* who, Vec2 position)
 {
 	who->removeFromParentAndCleanup(true);
-	char a[20];
+	char a[8];
+	char score[20] = "score:";
 	//数字转字符串
 	sprintf(a, "%d", _Weight);
-	weightscore = Label::createWithSystemFont(a, "Arial", 32);
-
-	int x = MAX(position.x, _screenWidth / 2);
-	int y = MAX(position.y, _screenHeight / 2);
-
-	x = MIN(x, (_map->getMapSize().width*_map->getTileSize().width - _screenWidth / 2));
-	y = MIN(y, (_map->getMapSize().height*_map->getTileSize().height - _screenHeight / 2));
-	weightscore->setPosition(x - 300, y + 150);
+	strcat(score, a);
+	weightscore = Label::createWithSystemFont(score, "Arial", 32);
+	weightscore->setPosition(scenecenter(position).x - 300, scenecenter(position).y + 185);
 	this->addChild(weightscore);
 }
 
@@ -259,7 +273,6 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 	}
 	else if (kind == mass)
 	{
-		log("mass is made");
 		auto ball = customBall::create("mass.png", kind);
 		ball->setScale(scale);
 		ball->setPosition(pos);
@@ -303,10 +316,8 @@ void GameScene::createFood(float dt)
 {
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	creatBall(0.1f, Vect(_map->getMapSize().width*_map->getTileSize().width / 2, _map->getMapSize().height*_map->getTileSize().height / 2), Vect(0.f, 0.f), food);
-	log("foodOk");
 	if (_checkWP)//产生mass
 	{
-		log("mass ok");
 		Vector<Node*> children = this->getChildren();
 		for (auto n : children)
 		{
@@ -326,7 +337,6 @@ void GameScene::createFood(float dt)
 void GameScene::checkDT(float dt)
 {
 	_checkDT = true;
-	log("divideOk");
 }
 
 void GameScene::onEnter()
@@ -340,20 +350,31 @@ void GameScene::onEnter()
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(contactListener, this);
 }
 
-
-void GameScene::setViewPointCenter(Vec2 position)
+//地图中心寻找函数
+Point GameScene::scenecenter(Vec2 position)
 {
 	int x = MAX(position.x, _screenWidth / 2);
 	int y = MAX(position.y, _screenHeight / 2);
 
 	x = MIN(x, (_map->getMapSize().width*_map->getTileSize().width - _screenWidth / 2));
 	y = MIN(y, (_map->getMapSize().height*_map->getTileSize().height - _screenHeight / 2));
-	Point actualPosition = Point(x, y);
+	return Point(x, y);
+}
+
+
+void GameScene::returnchoice(Node* who, Vec2 position)
+{
+	who->setPosition(Vec2(scenecenter(position)).x+350, Vec2(scenecenter(position)).y+185);
+}
+
+void GameScene::setViewPointCenter(Vec2 position)
+{
+	
+	Point actualPosition =scenecenter(position);
 
 	Point centerOfView = Point(_screenWidth / 2, _screenHeight / 2);
 	Point viewPoint = centerOfView - actualPosition;
 	//Point try1 = Point(x + 10, y + 10);
-	log("action");
 	this->setPosition(viewPoint);
 	//this->runAction(MoveTo::create(1.0f, viewPoint));
 	//this->runAction(MoveTo::create(0.01f, Point(3000,3000));
@@ -368,18 +389,13 @@ void GameScene::update(float dt)
 	{
 		if (n->getTag() %10 == player)
 		{
-			if (index == 0)
-			{
-				log("position ok");
-				setViewPointCenter(n->getPosition());
-				Weightchange(weightscore, n->getPosition());
-				++index;
-			}
-
+			setViewPointCenter(n->getPosition());
+			Weightchange(weightscore, n->getPosition());
+			returnchoice(return1_button, n->getPosition());
+			++index;
+			if (index != 0)break;
 		}
 	}
-
-
 }
 
 /*void GameScene::update(float dt)
@@ -427,7 +443,6 @@ bool GameScene::_onContactBegin(const PhysicsContact& contact)
 			}
 			else if ((tagA % 10 == 1) && (tagB % 10 == 3) && (!_checkWP))
 			{
-				log("mass gone");
 				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
 				spriteA->setScale(newScale);
 				spriteB->removeFromParentAndCleanup(true);
@@ -435,7 +450,6 @@ bool GameScene::_onContactBegin(const PhysicsContact& contact)
 			}
 			else if ((tagA % 10 == 3) && (tagB % 10 == 1) && (!_checkWP))
 			{
-				log("mass gone");
 				float newScale = pow((spriteA->getScale()*spriteA->getScale()*spriteA->getScale()) + (spriteB->getScale()*spriteB->getScale()*spriteB->getScale()), 0.333333);
 				spriteB->setScale(newScale);
 				spriteA->removeFromParentAndCleanup(true);

@@ -2,7 +2,11 @@
 #include "cocos2d.h"
 #include"customBall.h"
 #include<vector>
+#include "ui/CocosGUI.h"
 USING_NS_CC;
+using namespace ui;
+
+
 class GameScene :public cocos2d::Layer
 {
 private:
@@ -10,7 +14,7 @@ private:
 	int ballTag = 0;
 	int _screenWidth, _screenHeight;
 	int _Weight;
-
+	Button* return1_button;
 public:
 	GameScene();
 	~GameScene();
@@ -57,8 +61,13 @@ public:
 	void setViewPointCenter(Vec2 position);
 	//确认分裂过了一阵子
 	void checkDT(float dt);
+
+	//返回选择界面
+	void returnchoice(Node* who, Vec2 position);
 	//
 	void onEnter();
+
+	Point  scenecenter(Vec2 position);
 
 	//重写update函数
 	void update(float dt);

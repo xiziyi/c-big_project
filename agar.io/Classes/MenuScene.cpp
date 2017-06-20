@@ -3,7 +3,7 @@
 #include "AudioControlScene.h"
 #include "ExitScene.h"
 #include "ui/CocosGUI.h"
-#include"GameScene.h"
+#include "GameScene.h"
 USING_NS_CC;
 using namespace ui;
 
