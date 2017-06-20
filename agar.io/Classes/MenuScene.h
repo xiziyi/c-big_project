@@ -2,6 +2,7 @@
 #define _MUNE_SCENE_H_
 
 #include "cocos2d.h"
+USING_NS_CC;
 
 class GameMenu : public cocos2d::Layer
 {

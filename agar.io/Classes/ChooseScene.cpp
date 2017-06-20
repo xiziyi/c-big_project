@@ -3,7 +3,7 @@
 #include "ChooseScene.h"
 #include "ui/CocosGUI.h"
 #include"GameScene.h"
-#define userDefault CCUserDefault::sharedUserDefault()
+//#define userDefault CCUserDefault::sharedUserDefault()
 
 USING_NS_CC;
 using namespace ui;
@@ -28,32 +28,33 @@ bool Choose::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
 	//²Ëµ¥±³¾°
-	auto title = Sprite::create("menu_background.png");
+	auto title = Sprite::create("choosebackground.png");
 	title->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
 	this->addChild(title, 0);
 
 	//"Æ¤·ô"°´Å¥
-	auto choose_button1 = Button::create("Begin.png");
-	choose_button1->setPosition(Vec2(visibleSize.width *0.2, visibleSize.height*0.75));
+	auto choose_button1 = Button::create("haipa.png");
+	choose_button1->setPosition(Vec2(visibleSize.width *0.3, visibleSize.height*0.65));
 	choose_button1->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			int getIntegerForKey(const char* pKey, int defaultValue = 1);
-			//ÇÐ»»µ½youxi³¡¾°
+			UserDefault::getInstance()->setIntegerForKey("integer", 1);
+			UserDefault::getInstance()->flush();
 			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);
 		}
 	});
 	this->addChild(choose_button1);
 	//2
-	auto choose_button2 = Button::create("Begin.png");
-	choose_button2->setPosition(Vec2(visibleSize.width *0.5, visibleSize.height*0.75));
+	auto choose_button2 = Button::create("meng.png");
+	choose_button2->setPosition(Vec2(visibleSize.width *0.5, visibleSize.height*0.65));
 	choose_button2->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			int getIntegerForKey(const char* pKey, int defaultValue = 2);
+			UserDefault::getInstance()->setIntegerForKey("integer", 2);
+			UserDefault::getInstance()->flush();
 			//ÇÐ»»µ½youxi³¡¾°
 			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);
@@ -61,13 +62,14 @@ bool Choose::init()
 	});
 	this->addChild(choose_button2);
 	//3
-	auto choose_button3 = Button::create("Begin.png");
-	choose_button3->setPosition(Vec2(visibleSize.width *0.8, visibleSize.height*0.75));
+	auto choose_button3 = Button::create("kaixin.png");
+	choose_button3->setPosition(Vec2(visibleSize.width *0.7, visibleSize.height*0.65));
 	choose_button3->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			int getIntegerForKey(const char* pKey, int defaultValue = 3);
+			UserDefault::getInstance()->setIntegerForKey("integer", 3);
+			UserDefault::getInstance()->flush();
 			//ÇÐ»»µ½youxi³¡¾°
 			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);
@@ -75,13 +77,14 @@ bool Choose::init()
 	});
 	this->addChild(choose_button3);
 	//4
-	auto choose_button4 = Button::create("Begin.png");
-	choose_button1->setPosition(Vec2(visibleSize.width *0.2, visibleSize.height*0.30));
-	choose_button1->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
+	auto choose_button4 = Button::create("shengqi.png");
+	choose_button4->setPosition(Vec2(visibleSize.width *0.3, visibleSize.height*0.35));
+	choose_button4->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			int getIntegerForKey(const char* pKey, int defaultValue = 4);
+			UserDefault::getInstance()->setIntegerForKey("integer", 4);
+			UserDefault::getInstance()->flush();
 			//ÇÐ»»µ½youxi³¡¾°
 			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);
@@ -89,13 +92,14 @@ bool Choose::init()
 	});
 	this->addChild(choose_button4);
 	//5
-	auto choose_button5 = Button::create("Begin.png");
-	choose_button1->setPosition(Vec2(visibleSize.width *0.5, visibleSize.height*0.30));
-	choose_button1->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
+	auto choose_button5 = Button::create("mogui.png");
+	choose_button5->setPosition(Vec2(visibleSize.width *0.5, visibleSize.height*0.35));
+	choose_button5->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			int getIntegerForKey(const char* pKey, int defaultValue = 5);
+			UserDefault::getInstance()->setIntegerForKey("integer", 5);
+			UserDefault::getInstance()->flush();
 			//ÇÐ»»µ½youxi³¡¾°
 			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);
@@ -103,13 +107,14 @@ bool Choose::init()
 	});
 	this->addChild(choose_button5);
 	//6
-	auto choose_button6 = Button::create("Begin.png");
-	choose_button1->setPosition(Vec2(visibleSize.width *0.8, visibleSize.height*0.30));
-	choose_button1->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
+	auto choose_button6 = Button::create("zhongdu.png");
+	choose_button6->setPosition(Vec2(visibleSize.width *0.7, visibleSize.height*0.35));
+	choose_button6->addTouchEventListener([](Ref*pSender, Widget::TouchEventType type)
 	{
 		if (type == Widget::TouchEventType::ENDED)
 		{
-			int getIntegerForKey(const char* pKey, int defaultValue = 6);
+			UserDefault::getInstance()->setIntegerForKey("integer", 6);
+			UserDefault::getInstance()->flush();
 			//ÇÐ»»µ½youxi³¡¾°
 			auto transition = TransitionShrinkGrow::create(1.0, GameScene::createScene());
 			Director::getInstance()->replaceScene(transition);

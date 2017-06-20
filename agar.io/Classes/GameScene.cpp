@@ -1,13 +1,12 @@
 #include "GameScene.h"
+#include "MenuScene.h"
 #include"SimpleAudioEngine.h"
 #include<math.h>
 #include "ui/CocosGUI.h"
-#include "MenuScene.h"
 #include "string"
 USING_NS_CC;
 using namespace ui;
 using namespace std;
-using namespace cocos2d;
 using namespace CocosDenshion;
 
 GameScene::GameScene()
@@ -42,9 +41,6 @@ bool GameScene::init()
 	Point origin = Director::getInstance()->getVisibleOrigin();
 	_screenWidth = visibleSize.width;
 	_screenHeight = visibleSize.height;
-
-	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic("music.wav");
-	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("music.wav", true);
 
 	//添加地图
 	_map = TMXTiledMap::create("_map.tmx");
@@ -115,8 +111,8 @@ bool GameScene::init()
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity() * 2, player);
 					creatBall((n->getScale()) / 1.2599, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
 					n->removeFromParentAndCleanup(true);
-					SimpleAudioEngine::sharedEngine()->preloadEffect("effect.wav");
-					SimpleAudioEngine::sharedEngine()->playEffect("effect.wav", false);
+					SimpleAudioEngine::sharedEngine()->preloadEffect("effect2.wav");
+					SimpleAudioEngine::sharedEngine()->playEffect("effect2.wav", false);
 					_checkDT = false;//触发分裂后短时不能融合
 				}
 			}
@@ -199,31 +195,31 @@ void GameScene::creatBall(float scale, Vect pos, Vect vel,int kind)
 
 	if (kind == player)
 	{
-		auto ball = customBall::create("meng.png", kind);
+		auto ball = customBall::create("meng1.png", kind);
 		int i = UserDefault::getInstance()->getIntegerForKey("integer");
 		if (i == 1)
 		{
-             ball = customBall::create("haipa.png", kind);
+             ball = customBall::create("haipa1.png", kind);
 		}
 		else if (i == 2)
 		{
-			 ball = customBall::create("meng.png", kind);
+			 ball = customBall::create("meng1.png", kind);
 		}
 		else if (i == 3)
 		{
-			 ball = customBall::create("kaixin.png", kind);
+			 ball = customBall::create("kaixin1.png", kind);
 		}
 		else if (i == 4)
 		{
-			 ball = customBall::create("shengqi.png", kind);
+			 ball = customBall::create("shengqi1.png", kind);
 		}
 		else if (i ==5)
 		{
-			 ball = customBall::create("mogui.png", kind);
+			 ball = customBall::create("mogui1.png", kind);
 		}
 		else if (i == 6)
 		{
-			 ball = customBall::create("zhongdu.png", kind);
+			 ball = customBall::create("zhongdu1.png", kind);
 		}
 
 		
@@ -355,7 +351,10 @@ void GameScene::createFood(float dt)
 		for (auto n : children)
 		{
 			if (((n->getTag() % 10) == player) && (n->getScale() > 0.3f))
-			{				creatBall(0.15f, n->getPosition(), n->getPhysicsBody()->getVelocity()* 15, mass);
+			{				
+				creatBall(0.15f, n->getPosition(), n->getPhysicsBody()->getVelocity()* 15, mass);
+				SimpleAudioEngine::sharedEngine()->preloadEffect("effect.wav");
+				SimpleAudioEngine::sharedEngine()->playEffect("effect.wav", false);
 				float newScale = pow(((n->getScale()*n->getScale()*n->getScale())-0.003375f), 0.333333f);
 				creatBall(newScale, n->getPosition(), n->getPhysicsBody()->getVelocity(), player);
 				_Weight -= 15;

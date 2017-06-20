@@ -1,14 +1,14 @@
 #include "cocos2d.h"
+#include "GameScene.h"
 #include "MenuScene.h"
 #include "ChooseScene.h"
 #include "AudioControlScene.h"
 #include "ExitScene.h"
 #include "ui/CocosGUI.h"
-#include "GameScene.h"
 USING_NS_CC;
 using namespace ui;
 
-Scene * GameMenu::createScene()
+Scene* GameMenu::createScene()
 {
 	auto scene = Scene::create();
     auto layer = GameMenu::create();

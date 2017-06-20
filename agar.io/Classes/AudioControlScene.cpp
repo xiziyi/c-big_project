@@ -27,6 +27,11 @@ bool AudioControl::init()
 	//获得设备可见视图大小
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 
+	//
+	SimpleAudioEngine::sharedEngine()->preloadBackgroundMusic("music.wav");
+	SimpleAudioEngine::sharedEngine()->preloadEffect("effect2.wav");
+	SimpleAudioEngine::sharedEngine()->preloadEffect("effect.wav");
+
 	//菜单背景
 	auto title = Sprite::create("menu_background 2.png");
 	title->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
@@ -48,6 +53,7 @@ bool AudioControl::init()
 	{
 		musicPercent = 100.0f;
 	}
+	log("%d", musicPercent);
 	//设置背景音乐滑动条的初始值
 	music_slider->setPercent(musicPercent);
 	music_slider->setPosition(Vec2(visibleSize.width*0.6, visibleSize.height*0.54));
@@ -59,10 +65,13 @@ bool AudioControl::init()
 		{
 		     // 获得滑动条百分比 
 			int percent = music_slider->getPercent(); 
-			// 设置背景音乐值为滑动条百分比 / 100，因为Slider的百分比是1〜 100, 而MusicVolume的取值 // 是 0.0〜 1.0 
+			// 设置背景音乐值为滑动条百分比 / 100，因为Slider的百分比是1〜 100, 而MusicVolume的取值是0.0〜 1.0 
 			SimpleAudioEngine::getInstance()->setBackgroundMusicVolume(float(percent)/100);
 			// 存储设置的背景音乐值
-			UserDefault::getInstance()->setFloatForKey("musicPercent",percent);
+			UserDefault::getInstance()->setFloatForKey("musicPercent", 0.5f);
+			log("%d", musicPercent);
+	
+			SimpleAudioEngine::sharedEngine()->playBackgroundMusic("music.wav", true);
 	    }
 	}); 
 	this->addChild(music_slider); 
