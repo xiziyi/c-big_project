@@ -14,6 +14,7 @@ private:
 	int _screenWidth, _screenHeight;
 	int _Weight;
 	Button* return1_button;
+	int _ai1;
 public:
 	GameScene();
 	~GameScene();
@@ -26,19 +27,26 @@ public:
 	int foodCount = 0;
 	//最大食物数量
 	const int foodMax = 1200;
-	//不可见的神秘力量
-	cocos2d::Sprite* master;
+	//当前病毒数量
+	int virusCount = 0;
+	//最大病毒数量
+	const int virusMax = 100;
 
 	//精灵种类的标识符
 	const int player = 1;
 	const int food = 2;
 	const int mass = 3;
-	//const int player2 = 2;
+	const int aiball = 4;
+	const int virus = 5;
 	/* And so on......*/
+	//为了处理蜜汁bug而存在
 	int aaa = 0;
+
 	bool _checkDT = true;
 	//确认W键是否按下
 	bool _checkWP = false;
+	//ai行动判断
+	void aiaction(Node* who);
 
 	//创建物理世界
 	void setPhyWorld(cocos2d::PhysicsWorld* world) { m_world = world; };
@@ -70,6 +78,7 @@ public:
 
 	//重写update函数
 	void update(float dt);
+	void update1(float dt);
 	//void update(float dt) override;
 	//接触事件函数
 	bool _onContactBegin(const cocos2d::PhysicsContact & contact);
